@@ -96,7 +96,29 @@ sbatch train.sh                        # training (or: python -u v2_residual_une
 python -u test_full.py                 # headline evaluation
 ```
 
-`requirements.txt` lists the Python packages. The cluster used PyTorch 2.9 with CUDA 12.8.
+`requirements.txt` lists the Python packages. The exact cluster setup is below.
+
+## What it ran on
+
+Hardware and software, exactly as used for the thesis run.
+
+| | |
+|---|---|
+| Machine | `anansi` cluster of the VSC (Flemish Supercomputer Center), the Tier-2 system hosted at VUB |
+| Partition | `ada_gpu`, one node, 8 CPU cores, 32 GB RAM |
+| GPU | one shared NVIDIA L40S (46 GB), requested as 4 shards (`--gres=shard:4`) |
+| Scheduler | Slurm, 12 h wall-time limit per job (`train.sh`) |
+| One training run | 150 epochs, 2 to 3 hours. The checkpoint kept is epoch 45, validation RMSE 1.37 °C |
+| Toolchain | foss-2025a modules |
+| PyTorch | 2.9.1, CUDA 12.8.0 |
+| netCDF4 (Python) | 1.7.2 |
+| zarr | 3.1.1 |
+| rioxarray | 0.21.0 |
+| Storage | data and checkpoints on `$VSC_SCRATCH`, code in `$VSC_HOME` |
+
+The thesis itself is LaTeX, built with `latexmk` and the VUB `vub` package ([texlive-vub](https://gitlab.com/rubdos/texlive-vub)), which sets the house style: TeX Gyre Adventor for titles and the VUB blue and orange. The defence slides use the same package's Beamer theme. Neither is in this repository.
+
+The computational resources and services used in this work were provided by the VSC, funded by the Research Foundation - Flanders (FWO) and the Flemish Government.
 
 ## Docs
 
