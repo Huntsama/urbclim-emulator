@@ -1,6 +1,11 @@
-# UrbClim emulator: a Residual U-Net for 100 m urban temperature maps
+# Deep Learning for Urban Climate Modelling
 
-Code for my MSc thesis at Vrije Universiteit Brussel (2026), *Deep Learning for Urban Climate Modelling: emulating UrbClim across European cities with a Residual U-Net*. Promotors Prof. Lesley De Cruz and Prof. Sara Top, supervisor Sara Speelman.
+**Emulating UrbClim across European cities with a Residual U-Net**
+
+Master thesis submitted in order to be awarded the Master's Degree in Applied Sciences and Engineering: Applied Computer Science, Faculty of Engineering, Vrije Universiteit Brussel, June 2026.
+Author: Jawad Shaissah. Promotors: prof. dr. Lesley De Cruz and dr. Sara Top. Supervisor: Sara Speelman.
+
+This repository holds the code behind that thesis.
 
 One convolutional network stands in for VITO's UrbClim urban climate model. It takes ERA5 reanalysis on a ~31 km grid plus static maps of the city (elevation, land cover, vegetation, imperviousness, anthropogenic heat) and returns the hourly 2 m air temperature at 100 m resolution. One model, 100 European cities, trained on 60 of them and tested on 20 it never saw.
 
@@ -133,4 +138,4 @@ The data preparation follows the approach of Jonas Blancke's thesis on the same 
 
 ## Licence
 
-MIT. If you use this code, cite the thesis: Shaissah, J. (2026). *Deep Learning for Urban Climate Modelling: emulating UrbClim across European cities with a Residual U-Net*. MSc thesis, Vrije Universiteit Brussel.
+MIT. If you use this code, cite the thesis: Shaissah, J. (2026). *Deep Learning for Urban Climate Modelling: emulating UrbClim across European cities with a Residual U-Net*. Master thesis, Faculty of Engineering, Vrije Universiteit Brussel, June 2026.
