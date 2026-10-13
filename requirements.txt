@@ -1,0 +1,10 @@
+torch>=2.1
+tensorboard
+numpy
+pandas
+xarray
+zarr
+netCDF4
+pyproj
+matplotlib
+pillow
