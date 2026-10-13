@@ -17,6 +17,14 @@ One convolutional network stands in for VITO's UrbClim urban climate model. It t
 
 A city-year of hourly maps takes 46 seconds on one GPU. UrbClim needs roughly 200,000 CPU-core-hours for the same.
 
+![Copenhagen, 8 June 2017 20:00 UTC: UrbClim reference, prediction, signed error](docs/figures/copenhagen_2017-06-08_20utc.png)
+
+*Copenhagen, a test city the model never saw, on 8 June 2017 at 20:00 UTC. Left: UrbClim. Middle: the network. Right: the difference.*
+
+![Antwerp, 22 June 2017, 24 hours side by side](docs/figures/diurnal_antwerp_2017-06-22.gif)
+
+*Antwerp, 22 June 2017, the whole day hour by hour. The city warms and cools in step with the reference, including the night-time heat island over the centre.*
+
 This repository holds the code only. The data (about 1 TB of Zarr stores) and the trained checkpoints live on the VUB cluster and are not included. See *Data* below for where each input comes from.
 
 ## How it works
@@ -52,6 +60,8 @@ NDVI .nc (per city)               ─┘  splits, zscore
 
 The CSVs this stage produced for the thesis run are in `metadata/`, so the split and the statistics can be inspected without the cluster.
 
+![Train, validation and test cities on a map of Europe](docs/figures/split_map.png)
+
 ### 2. Dataset, model and training (`v2_residual_unet.py`)
 
 **`UrbClimDataset`** builds one sample: one city, one random timestamp from the split's years, one 64 × 64 crop. For that sample it
@@ -65,7 +75,13 @@ The CSVs this stage produced for the thesis run are in `metadata/`, so the split
 
 **`UrbClimUNet`** is a 4-level U-Net whose double convolutions are replaced by residual blocks. Input 23 channels at 64 × 64, bottleneck 1536 channels at 4 × 4, output one channel: the predicted residual in kelvin. About 68 M parameters, most of them in the bottleneck. Dropout2d in the bottleneck and decoder.
 
+<p align="center"><img src="docs/figures/model.png" width="420" alt="U-Net block diagram: 23 input channels, four down levels to a 1536-channel 4 by 4 bottleneck, four up levels with skips, one output channel"></p>
+
 **Training**: masked MSE on valid pixels only, AdamW with weight decay 1e-4, OneCycleLR peaking at 8e-5, batch 32 with 4-step gradient accumulation (effective 128), gradient clipping at 2.0, 150 epochs of 6,000 samples. Checkpoints every epoch plus the best validation epoch. `train.sh` is the Slurm job that ran it.
+
+![Training and validation RMSE over 150 epochs, best validation at epoch 45](docs/figures/learning_curve_rmse.png)
+
+*Validation RMSE bottoms out at epoch 45 and then stays flat while training error keeps falling. Epoch 45 is the checkpoint every number here comes from.*
 
 The complete, line-by-line account is in `docs/model_walkthrough.md`.
 
@@ -78,6 +94,12 @@ The complete, line-by-line account is in `docs/model_walkthrough.md`.
 | `test_diurnal.py` | 24 consecutive hours over one city, for the diurnal cycle and the animation on [jwds.me](https://www.jwds.me). |
 | `diagnose.py` | Per-city and per-land-class error tables, to see where the model is wrong. |
 | `tools/` | Learning curves from the checkpoint history, and the diurnal figure and GIF. |
+
+![Per-city RMSE, MAE and bias on the 20 test cities](docs/figures/percity_metrics.png)
+
+![Per-city RMSE of the network against the lapse-rate-corrected ERA5 baseline](docs/figures/added_value_per_city.png)
+
+*Per city: Copenhagen is the easiest at 0.76 °C, Oslo and Prague the hardest at about 1.6 °C, and both carry a warm bias above 1 °C. Against the ERA5 baseline the network wins in 19 of 20 cities, by more than half in Genoa, Strasbourg, Thessaloniki and Copenhagen. Tallinn is the exception, where the baseline was already at 1 °C.*
 
 ## Data
 
